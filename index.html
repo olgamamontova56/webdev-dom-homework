@@ -111,12 +111,23 @@
       const oldComment = commentElement.innerHTML;
       commentElement.innerHTML =
         oldComment +
-        ` ${nameInputElement.value} <br> ${
-          userInputElement.value
-        } <br> ${formDataComment(dateComment)}`;
+        `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${formDataComment(dateComment)}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${userInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>`
+      
       commentElement.value = "";
-
-  
     });
   </script>
 </html>
