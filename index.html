@@ -9,35 +9,35 @@
   <body>
     <div class="container" >
       <ul class="comments" id = 'comments'>
-
-      <div class="add-form"   >
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-          id = "name-input"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-          id = "text-input"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button" id="add-button">Написать</button>
+      </ul>
+        <div class="add-form"   >
+          <input
+            type="text"
+            class="add-form-name"
+            placeholder="Введите ваше имя"
+            id = "name-input"
+          />
+          <textarea
+            type="textarea"
+            class="add-form-text"
+            placeholder="Введите ваш коментарий"
+            rows="4"
+            id = "text-input"
+          ></textarea>
+          <div class="add-form-row">
+            <button class="add-form-button" id="add-button">Написать</button>
+          </div>
         </div>
-      </div>
-
+    </div>
 
 
   </body>
   
-      <style> 
+  <style> 
       .error {
       background-color: #e8b3aa;
-    }
-      </style>
+      }
+  </style>
 
   <script>
     const commentElement = document.getElementById('comments');
@@ -67,47 +67,46 @@
    
 
   //добавление комента через рендер 
-    const renderComment = () => {
-  const commentHtml = comments
+  const renderComment = () => {
+      const commentHtml = comments
         .map((comment,index) => {
-        return  
-      `<li class="comment">
-          <div class="comment-header">
-            <div>${comment.name}</div>
-            <div>${comment.date}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${comment.text}
+            return `<li class="comment">
+            <div class="comment-header">
+              <div>${comment.name}</div>
+              <div>${comment.date}</div>
             </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${comment.likesCounter}</span>
-              <button class="like-button ${comment.isLiked ? '-active-like ' : ''}" data-index="${index}""></button>
+            <div class="comment-body">
+              <div class="comment-text">
+                ${comment.text}
+              </div>
             </div>
-          </div>
-        </li>`
-  })
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${comment.likesCounter}</span>
+                <button class="like-button ${comment.isLiked ? '-active-like ' : ''}" data-index="${index}""></button>
+              </div>
+            </div>
+            </li>`
+        })
         .join('');
 
-    ListElement.innerHtml = commentHtml;
-    initLikeListeners();
-}
+      ListElement.innerHTML = commentHtml;
+      initLikeListeners();
+  }
 
 
   //обработчик лайков 
   const initLikeListeners = () => {
     const likeButtons = document.querySelectorAll('.like-button');
-    for (const likeButton of likeButtons) {
-      likeButton.addEventListener('click', () => {
-        const index = likeButton.dataset.index;
-        comments[index].likesCounter += comments[index].isLiked ? -1 : +1;
-        comments[index].isLiked = !comments[index].isLiked;
+      for (const likeButton of likeButtons) {
+        likeButton.addEventListener('click', () => {
+          const index = likeButton.dataset.index;
+          comments[index].likesCounter += comments[index].isLiked ? -1 : +1;
+          comments[index].isLiked = !comments[index].isLiked;
         
-        renderComment();
-      })
-    }
+          renderComment();
+        })
+      }
   }
 
   //дата 
@@ -122,20 +121,20 @@
         dateComment.getHours().toString().padStart(2, "0") +
         ":" +
         dateComment.getMinutes().toString().padStart(2, "0");
-      return formatDate;
+            return formatDate;
     }
-    const dateComment = new Date();
+      const dateComment = new Date();
 
 
   //активация кнопки //подцветка поля ввода //шаблон комента 
     buttonElement.addEventListener("click", () => {
-      nameInputElement.classList.remove("error");
-      textInputElement.classList.remove("error");
-      if (nameInputElement.value === "" || textInputElement.value === "") {
-        nameInputElement.classList.add("error");
-        textInputElement.classList.add("error");
-        return;
-      }
+        nameInputElement.classList.remove("error");
+        textInputElement.classList.remove("error");
+          if (nameInputElement.value === "" || textInputElement.value === "") {
+            nameInputElement.classList.add("error");
+            textInputElement.classList.add("error");
+            return;
+          }
 
       const addNewComment = () => {
         comments.push({
@@ -151,11 +150,14 @@
           renderComment();
 
       } 
+      
       buttonElement.addEventListener('click', addNewComment);
+
     });
 
 
     // вызов функций
     renderComment();
+    
   </script>
 </html>
