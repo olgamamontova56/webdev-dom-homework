@@ -118,7 +118,8 @@
   const initLikeListeners = () => {
     const likeButtons = document.querySelectorAll('.like-button');
       for (const likeButton of likeButtons) {
-        likeButton.addEventListener('click', () => {
+        likeButton.addEventListener('click', (event) => {
+          event.stopPropagation();
           const index = likeButton.dataset.index;
           comments[index].likesCounter += comments[index].isLiked ? -1 : +1;
           comments[index].isLiked = !comments[index].isLiked;
