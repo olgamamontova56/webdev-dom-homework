@@ -46,6 +46,22 @@
     const nameInputElement = document.getElementById('name-input');
     const ListElement = document.getElementById('comments');
    
+    //запрос в API
+   const fetchPromise = fetch('https://wedev-api.sky.pro.',{
+      method: 'GET',
+    });
+
+    fetchPromise.then((response ) => {
+
+      const jsonPromise = response.jsone()
+      jsonPromise.then((responseData) => {
+        console.log(responseData);
+        tasks = responseData.todos;
+        renderTasks();
+      })
+    })
+
+
 
     let comments = [
     {
@@ -64,6 +80,7 @@
       isLiked: false,
     },
   ];
+
  //функция копирования контента коментария 
   function copyElement(item) {
       const Author = item.querySelector('.comment-Author').textContent
@@ -155,39 +172,50 @@
             textInputElement.classList.add("error");
             return;
           }
-
-      const addNewComment = () => {
-        comments.push({
-          name: nameInputElement.value
-          .replaceAll('&', '&amp;')
-          .replaceAll('<', '&it;')
-          .replaceAll('>', '&gt;')
-          .replaceAll('"', '&quot;'),
-          date: '12.02.22 12:18',     
-          text: textInputElement.value
-          .replaceAll('&', '&amp;')
-          .replaceAll('<', '&it;')
-          .replaceAll('>', '&gt;')
-          .replaceAll('"', '&quot;'),
-          likesCounter: 0,
-          isLiked: false,
+    
+    //запрос в API
+    const fetchPromise = fetch( 'https://wedev-api.sky.pro.',{
+          method: 'POST',
+          body: JSON.stringify({
+            text: textInputElement.value
+          }),
+        });
+      fetchPromise.then((response ) => {
+        const jsonPromise = response.jsone()
+          jsonPromise.then((responseData) => {
+            tasks = responseData.todos;
+            renderTasks();
         })
-        
+    })      
+
+    const addNewComment = () => {
+      comments.push({
+        name: nameInputElement.value
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&it;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;'),
+        date: '12.02.22 12:18',     
+        text: textInputElement.value
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&it;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;'),
+        likesCounter: 0,
+        isLiked: false,
+      })
+    
           nameInputElement.value = ""; 
           textInputElement.value = "";
           renderComment();
-
-      } 
+    } 
       
-      buttonElement.addEventListener('click', addNewComment);
-
-
-
+    buttonElement.addEventListener('click', addNewComment);
   });
 
 
-    // вызов функций
-    renderComment();
+  // вызов функций
+  renderComment();
 
  
    
