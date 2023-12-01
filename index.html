@@ -64,6 +64,17 @@
       isLiked: false,
     },
   ];
+ //функция копирования контента коментария 
+  function copyElement(item) {
+      const Author = item.querySelector('.comment-Author').textContent
+      const content = item.querySelector('.comment-text').textContent
+      textInputElement.value = `
+        ${Author}
+        ------
+        ${content}
+        ------
+      `
+    } 
    
 
   //добавление комента через рендер 
@@ -72,7 +83,7 @@
         .map((comment,index) => {
             return `<li class="comment">
             <div class="comment-header">
-              <div>${comment.name}</div>
+              <div class = 'comment-Author'>${comment.name}</div>
               <div>${comment.date}</div>
             </div>
             <div class="comment-body">
@@ -91,6 +102,14 @@
         .join('');
 
       ListElement.innerHTML = commentHtml;
+    
+    
+
+    // собирать данные и отправлять в  инпут
+    const commentsElement = document.querySelectorAll('.comment') 
+    commentsElement.forEach((item) => {
+      item.querySelector('.comment-text').addEventListener('click', () =>  copyElement(item))
+    })
       initLikeListeners();
   }
 
@@ -99,7 +118,8 @@
   const initLikeListeners = () => {
     const likeButtons = document.querySelectorAll('.like-button');
       for (const likeButton of likeButtons) {
-        likeButton.addEventListener('click', () => {
+        likeButton.addEventListener('click', (event) => {
+          event.stopPropagation();
           const index = likeButton.dataset.index;
           comments[index].likesCounter += comments[index].isLiked ? -1 : +1;
           comments[index].isLiked = !comments[index].isLiked;
@@ -127,7 +147,7 @@
 
 
   //активация кнопки //подцветка поля ввода //шаблон комента 
-    buttonElement.addEventListener("click", () => {
+  buttonElement.addEventListener("click", () => {
         nameInputElement.classList.remove("error");
         textInputElement.classList.remove("error");
           if (nameInputElement.value === "" || textInputElement.value === "") {
@@ -138,11 +158,19 @@
 
       const addNewComment = () => {
         comments.push({
-          name: 'nameImputElement.value',
+          name: nameInputElement.value
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&it;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;'),
           date: '12.02.22 12:18',     
-          text: 'textInputElement.value',
+          text: textInputElement.value
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&it;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;'),
           likesCounter: 0,
-          isLiked: true,
+          isLiked: false,
         })
         
           nameInputElement.value = ""; 
@@ -153,11 +181,15 @@
       
       buttonElement.addEventListener('click', addNewComment);
 
-    });
+
+
+  });
 
 
     // вызов функций
     renderComment();
-    
+
+ 
+   
   </script>
 </html>
