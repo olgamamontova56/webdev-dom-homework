@@ -47,39 +47,28 @@
     const ListElement = document.getElementById('comments');
    
     //запрос в API
-   const fetchPromise = fetch('https://wedev-api.sky.pro.',{
+   const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/:olga-mamontova/comments',{
       method: 'GET',
-    });
+   });
 
     fetchPromise.then((response ) => {
-
-      const jsonPromise = response.jsone()
+      const jsonPromise = response.json()
       jsonPromise.then((responseData) => {
-        console.log(responseData);
-        tasks = responseData.todos;
-        renderTasks();
-      })
-    })
-
-
-
-    let comments = [
-    {
-      name: 'Глеб Фокин',
-      date: '12.02.22 12:18',     
-      text: 'Это будет первый комментарий на этой странице',
-      likesCounter: 3,
-      isLiked: true,
-    },
-
-    {
-      name: 'Варвара Н.',
-      date: '13.02.22 19:22',     
-      text: 'Мне нравится как оформлена эта страница! ❤',
-      likesCounter: 75,
-      isLiked: false,
-    },
-  ];
+      
+        commentList = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: comment.date,
+            id: comment.id,
+            isLiked: comment.isLiked,
+            likes: comment.likes,
+            text: comment.text,
+          };
+        });
+        console.log(commentList);
+        renderComment(commentList)
+      });
+    });    
 
  //функция копирования контента коментария 
   function copyElement(item) {
@@ -93,12 +82,8 @@
       `
     } 
    
-
-  //добавление комента через рендер 
-  const renderComment = () => {
-      const commentHtml = comments
-        .map((comment,index) => {
-            return `<li class="comment">
+    const renderElem = (comment, index) => {
+      return `<li class="comment">
             <div class="comment-header">
               <div class = 'comment-Author'>${comment.name}</div>
               <div>${comment.date}</div>
@@ -110,12 +95,17 @@
             </div>
             <div class="comment-footer">
               <div class="likes">
-                <span class="likes-counter">${comment.likesCounter}</span>
+                <span class="likes-counter">${comment.likes}</span>
                 <button class="like-button ${comment.isLiked ? '-active-like ' : ''}" data-index="${index}""></button>
               </div>
             </div>
             </li>`
-        })
+    }
+
+  //добавление комента через рендер 
+  const renderComment = (comments) => {
+      const commentHtml = comments
+        .map(renderElem)
         .join('');
 
       ListElement.innerHTML = commentHtml;
@@ -138,10 +128,10 @@
         likeButton.addEventListener('click', (event) => {
           event.stopPropagation();
           const index = likeButton.dataset.index;
-          comments[index].likesCounter += comments[index].isLiked ? -1 : +1;
+          comments[index].likes += comments[index].isLiked ? -1 : +1;
           comments[index].isLiked = !comments[index].isLiked;
         
-          renderComment();
+          // renderComment();
         })
       }
   }
@@ -172,20 +162,19 @@
             textInputElement.classList.add("error");
             return;
           }
-    
+         
     //запрос в API
-    const fetchPromise = fetch( 'https://wedev-api.sky.pro.',{
+    const fetchPromise = fetch( 'https://wedev-api.sky.pro/api/v1/:olga-mamontova/comments',{
           method: 'POST',
           body: JSON.stringify({
-            text: textInputElement.value
+            text: textInputElement.value,
+            name : nameInputElement.value
           }),
         });
       fetchPromise.then((response ) => {
-        const jsonPromise = response.jsone()
+        const jsonPromise = response.json()
           jsonPromise.then((responseData) => {
-            tasks = responseData.todos;
-            renderTasks();
-        })
+          })
     })      
 
     const addNewComment = () => {
@@ -201,13 +190,13 @@
         .replaceAll('<', '&it;')
         .replaceAll('>', '&gt;')
         .replaceAll('"', '&quot;'),
-        likesCounter: 0,
+        likes: 0,
         isLiked: false,
       })
     
           nameInputElement.value = ""; 
           textInputElement.value = "";
-          renderComment();
+          // renderComment();
     } 
       
     buttonElement.addEventListener('click', addNewComment);
@@ -215,7 +204,6 @@
 
 
   // вызов функций
-  renderComment();
 
  
    
