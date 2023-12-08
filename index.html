@@ -47,28 +47,32 @@
     const ListElement = document.getElementById('comments');
    
     //запрос в API
-   const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/:olga-mamontova/comments',{
+    function APIGET() {
+      const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/:olga-mamontova/comments',{
       method: 'GET',
-    });
-
-    fetchPromise.then((response ) => {
-      const jsonPromise = response.json()
-      jsonPromise.then((responseData) => {
-      
-        commentList = responseData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            date: comment.date,
-            id: comment.id,
-            isLiked: comment.isLiked,
-            likes: comment.likes,
-            text: comment.text,
-          };
-        });
-        console.log(commentList);
-        renderComment(commentList)
       });
-    });    
+
+      fetchPromise.then((response ) => {
+        const jsonPromise = response.json()
+        jsonPromise.then((responseData) => {
+        
+          commentList = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: comment.date,
+              id: comment.id,
+              isLiked: comment.isLiked,
+              likes: comment.likes,
+              text: comment.text,
+            };
+          });
+          console.log(commentList);
+          renderComment(commentList)
+        });
+      });    
+    }
+    APIGET();
+   
 
     //функция копирования контента коментария 
     function copyElement(item) {
@@ -171,34 +175,36 @@
               name : nameInputElement.value
             }),
       });
+      
+      APIGET();
         
-      fetchPromise.then((response ) => {
-        const jsonPromise = response.json()
-          jsonPromise.then((responseData) => {
-            const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/:olga-mamontova/comments',{
-                method: 'GET',
-            });
+      // fetchPromise.then((response ) => {
+      //   const jsonPromise = response.json()
+      //     jsonPromise.then((responseData) => {
+      //       const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/:olga-mamontova/comments',{
+      //           method: 'GET',
+      //       });
 
-            fetchPromise.then((response ) => {
-              const jsonPromise = response.json()
-              jsonPromise.then((responseData) => {
-                commentList = responseData.comments.map((comment) => {
-                    return {
-                      name: comment.author.name,
-                      date: comment.date,
-                      id: comment.id,
-                      isLiked: comment.isLiked,
-                      likes: comment.likes,
-                      text: comment.text,
-                    };
-                });
-                console.log(commentList);
-                renderComment(commentList)
-              });
-            });    
-          })
+      //       fetchPromise.then((response ) => {
+      //         const jsonPromise = response.json()
+      //         jsonPromise.then((responseData) => {
+      //           commentList = responseData.comments.map((comment) => {
+      //               return {
+      //                 name: comment.author.name,
+      //                 date: comment.date,
+      //                 id: comment.id,
+      //                 isLiked: comment.isLiked,
+      //                 likes: comment.likes,
+      //                 text: comment.text,
+      //               };
+      //           });
+      //           console.log(commentList);
+      //           renderComment(commentList)
+      //         });
+      //       });    
+      //     })
 
-      })      
+      // })      
 
       // const addNewComment = () => {
     //   comments.push({
