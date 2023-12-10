@@ -46,32 +46,7 @@
     const nameInputElement = document.getElementById('name-input');
     const ListElement = document.getElementById('comments');
    
-    //запрос в API
-    function APIGET() {
-      const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/:olga-mamontova/comments',{
-      method: 'GET',
-      });
 
-      fetchPromise.then((response ) => {
-        const jsonPromise = response.json()
-        jsonPromise.then((responseData) => {
-        
-          commentList = responseData.comments.map((comment) => {
-            return {
-              name: comment.author.name,
-              date: comment.date,
-              id: comment.id,
-              isLiked: comment.isLiked,
-              likes: comment.likes,
-              text: comment.text,
-            };
-          });
-          console.log(commentList);
-          renderComment(commentList)
-        });
-      });    
-    }
-    APIGET();
    
 
     //функция копирования контента коментария 
@@ -156,7 +131,34 @@
     }
       const dateComment = new Date();
 
+    //запрос в API
+    function APIGET() {
+      const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/:olga-mamontova/comments',{
+      method: 'GET',
+      });
 
+      fetchPromise.then((response ) => {
+        const jsonPromise = response.json()
+        jsonPromise.then((responseData) => {
+        
+          commentList = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: comment.date,
+              id: comment.id,
+              isLiked: comment.isLiked,
+              likes: comment.likes,
+              text: comment.text,
+            };
+          });
+          console.log(commentList);
+          renderComment(commentList)
+        });
+      });    
+    }
+    APIGET();
+
+    
   //активация кнопки //подцветка поля ввода //шаблон комента 
     buttonElement.addEventListener("click", () => {
         nameInputElement.classList.remove("error");
@@ -167,6 +169,10 @@
             return;
           }
          
+      //блокировка кнопки 
+      buttonElement.disabled = true;
+      buttonElement.textContent = 'Элемент добавляеться';
+
       //запрос в API
       const fetchPromise = fetch( 'https://wedev-api.sky.pro/api/v1/:olga-mamontova/comments',{
             method: 'POST',
@@ -177,58 +183,11 @@
       });
       
       APIGET();
-        
-      // fetchPromise.then((response ) => {
-      //   const jsonPromise = response.json()
-      //     jsonPromise.then((responseData) => {
-      //       const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/:olga-mamontova/comments',{
-      //           method: 'GET',
-      //       });
-
-      //       fetchPromise.then((response ) => {
-      //         const jsonPromise = response.json()
-      //         jsonPromise.then((responseData) => {
-      //           commentList = responseData.comments.map((comment) => {
-      //               return {
-      //                 name: comment.author.name,
-      //                 date: comment.date,
-      //                 id: comment.id,
-      //                 isLiked: comment.isLiked,
-      //                 likes: comment.likes,
-      //                 text: comment.text,
-      //               };
-      //           });
-      //           console.log(commentList);
-      //           renderComment(commentList)
-      //         });
-      //       });    
-      //     })
-
-      // })      
-
-      // const addNewComment = () => {
-    //   comments.push({
-    //     name: nameInputElement.value
-    //     .replaceAll('&', '&amp;')
-    //     .replaceAll('<', '&it;')
-    //     .replaceAll('>', '&gt;')
-    //     .replaceAll('"', '&quot;'),
-    //     date: '12.02.22 12:18',     
-    //     text: textInputElement.value
-    //     .replaceAll('&', '&amp;')
-    //     .replaceAll('<', '&it;')
-    //     .replaceAll('>', '&gt;')
-    //     .replaceAll('"', '&quot;'),
-    //     likes: 0,
-    //     isLiked: false,
-    //   })
-    
-    //       nameInputElement.value = ""; 
-    //       textInputElement.value = "";
-    //       // renderComment();
-    // } 
       
-    // buttonElement.addEventListener('click', addNewComment);
+      //вернуть кнопку
+      buttonElement.disabled = false;
+      buttonElement.textContent = 'Добавить';
+        
   });
 
 
