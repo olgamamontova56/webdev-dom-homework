@@ -46,42 +46,48 @@
     const nameInputElement = document.getElementById('name-input');
     const ListElement = document.getElementById('comments');
    
+    //запрос в API
+    function APIGET() {
+      const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/:olga-mamontova/comments',{
+      method: 'GET',
+      });
 
-    let comments = [
-    {
-      name: 'Глеб Фокин',
-      date: '12.02.22 12:18',     
-      text: 'Это будет первый комментарий на этой странице',
-      likesCounter: 3,
-      isLiked: true,
-    },
-
-    {
-      name: 'Варвара Н.',
-      date: '13.02.22 19:22',     
-      text: 'Мне нравится как оформлена эта страница! ❤',
-      likesCounter: 75,
-      isLiked: false,
-    },
-  ];
- //функция копирования контента коментария 
-  function copyElement(item) {
-      const Author = item.querySelector('.comment-Author').textContent
-      const content = item.querySelector('.comment-text').textContent
-      textInputElement.value = `
-        ${Author}
-        ------
-        ${content}
-        ------
-      `
-    } 
+      fetchPromise.then((response ) => {
+        const jsonPromise = response.json()
+        jsonPromise.then((responseData) => {
+        
+          commentList = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: comment.date,
+              id: comment.id,
+              isLiked: comment.isLiked,
+              likes: comment.likes,
+              text: comment.text,
+            };
+          });
+          console.log(commentList);
+          renderComment(commentList)
+        });
+      });    
+    }
+    APIGET();
    
 
-  //добавление комента через рендер 
-  const renderComment = () => {
-      const commentHtml = comments
-        .map((comment,index) => {
-            return `<li class="comment">
+    //функция копирования контента коментария 
+    function copyElement(item) {
+        const Author = item.querySelector('.comment-Author').textContent
+        const content = item.querySelector('.comment-text').textContent
+        textInputElement.value = `
+          ${Author}
+          ------
+          ${content}
+          ------
+        `
+    } 
+   
+    const renderElem = (comment, index) => {
+      return `<li class="comment">
             <div class="comment-header">
               <div class = 'comment-Author'>${comment.name}</div>
               <div>${comment.date}</div>
@@ -93,41 +99,46 @@
             </div>
             <div class="comment-footer">
               <div class="likes">
-                <span class="likes-counter">${comment.likesCounter}</span>
+                <span class="likes-counter">${comment.likes}</span>
                 <button class="like-button ${comment.isLiked ? '-active-like ' : ''}" data-index="${index}""></button>
               </div>
             </div>
             </li>`
-        })
-        .join('');
+    }
 
-      ListElement.innerHTML = commentHtml;
-    
-    
+    //добавление комента через рендер 
+    const renderComment = (comments) => {
+        const commentHtml = comments
+          .map(renderElem)
+          .join('');
 
-    // собирать данные и отправлять в  инпут
-    const commentsElement = document.querySelectorAll('.comment') 
-    commentsElement.forEach((item) => {
-      item.querySelector('.comment-text').addEventListener('click', () =>  copyElement(item))
-    })
-      initLikeListeners();
-  }
+        ListElement.innerHTML = commentHtml;
+      
+      
+
+      // собирать данные и отправлять в  инпут
+      const commentsElement = document.querySelectorAll('.comment') 
+      commentsElement.forEach((item) => {
+        item.querySelector('.comment-text').addEventListener('click', () =>  copyElement(item))
+      })
+        initLikeListeners();
+    }
 
 
-  //обработчик лайков 
-  const initLikeListeners = () => {
-    const likeButtons = document.querySelectorAll('.like-button');
-      for (const likeButton of likeButtons) {
-        likeButton.addEventListener('click', (event) => {
-          event.stopPropagation();
-          const index = likeButton.dataset.index;
-          comments[index].likesCounter += comments[index].isLiked ? -1 : +1;
-          comments[index].isLiked = !comments[index].isLiked;
-        
-          renderComment();
-        })
-      }
-  }
+    //обработчик лайков 
+    const initLikeListeners = () => {
+      const likeButtons = document.querySelectorAll('.like-button');
+        for (const likeButton of likeButtons) {
+          likeButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            const index = likeButton.dataset.index;
+            comments[index].likes += comments[index].isLiked ? -1 : +1;
+            comments[index].isLiked = !comments[index].isLiked;
+          
+            // renderComment();
+          })
+        }
+    }
 
   //дата 
     function formDataComment(date) {
@@ -147,7 +158,7 @@
 
 
   //активация кнопки //подцветка поля ввода //шаблон комента 
-  buttonElement.addEventListener("click", () => {
+    buttonElement.addEventListener("click", () => {
         nameInputElement.classList.remove("error");
         textInputElement.classList.remove("error");
           if (nameInputElement.value === "" || textInputElement.value === "") {
@@ -155,41 +166,71 @@
             textInputElement.classList.add("error");
             return;
           }
-
-      const addNewComment = () => {
-        comments.push({
-          name: nameInputElement.value
-          .replaceAll('&', '&amp;')
-          .replaceAll('<', '&it;')
-          .replaceAll('>', '&gt;')
-          .replaceAll('"', '&quot;'),
-          date: '12.02.22 12:18',     
-          text: textInputElement.value
-          .replaceAll('&', '&amp;')
-          .replaceAll('<', '&it;')
-          .replaceAll('>', '&gt;')
-          .replaceAll('"', '&quot;'),
-          likesCounter: 0,
-          isLiked: false,
-        })
-        
-          nameInputElement.value = ""; 
-          textInputElement.value = "";
-          renderComment();
-
-      } 
+         
+      //запрос в API
+      const fetchPromise = fetch( 'https://wedev-api.sky.pro/api/v1/:olga-mamontova/comments',{
+            method: 'POST',
+            body: JSON.stringify({
+              text: textInputElement.value,
+              name : nameInputElement.value
+            }),
+      });
       
-      buttonElement.addEventListener('click', addNewComment);
+      APIGET();
+        
+      // fetchPromise.then((response ) => {
+      //   const jsonPromise = response.json()
+      //     jsonPromise.then((responseData) => {
+      //       const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/:olga-mamontova/comments',{
+      //           method: 'GET',
+      //       });
 
+      //       fetchPromise.then((response ) => {
+      //         const jsonPromise = response.json()
+      //         jsonPromise.then((responseData) => {
+      //           commentList = responseData.comments.map((comment) => {
+      //               return {
+      //                 name: comment.author.name,
+      //                 date: comment.date,
+      //                 id: comment.id,
+      //                 isLiked: comment.isLiked,
+      //                 likes: comment.likes,
+      //                 text: comment.text,
+      //               };
+      //           });
+      //           console.log(commentList);
+      //           renderComment(commentList)
+      //         });
+      //       });    
+      //     })
 
+      // })      
 
+      // const addNewComment = () => {
+    //   comments.push({
+    //     name: nameInputElement.value
+    //     .replaceAll('&', '&amp;')
+    //     .replaceAll('<', '&it;')
+    //     .replaceAll('>', '&gt;')
+    //     .replaceAll('"', '&quot;'),
+    //     date: '12.02.22 12:18',     
+    //     text: textInputElement.value
+    //     .replaceAll('&', '&amp;')
+    //     .replaceAll('<', '&it;')
+    //     .replaceAll('>', '&gt;')
+    //     .replaceAll('"', '&quot;'),
+    //     likes: 0,
+    //     isLiked: false,
+    //   })
+    
+    //       nameInputElement.value = ""; 
+    //       textInputElement.value = "";
+    //       // renderComment();
+    // } 
+      
+    // buttonElement.addEventListener('click', addNewComment);
   });
 
 
-    // вызов функций
-    renderComment();
-
- 
-   
   </script>
 </html>
