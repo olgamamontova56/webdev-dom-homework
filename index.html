@@ -7,6 +7,8 @@
   </head>
 
   <body>
+ 
+
     <div class="container" >
       <ul class="comments" id = 'comments'>
       </ul>
@@ -30,13 +32,14 @@
         </div>
     </div>
 
-
+ 
   </body>
   
   <style> 
-      .error {
+    .error {
       background-color: #e8b3aa;
-      }
+    }
+
   </style>
 
   <script>
@@ -45,9 +48,7 @@
     const textInputElement = document.getElementById('text-input');
     const nameInputElement = document.getElementById('name-input');
     const ListElement = document.getElementById('comments');
-   
 
-   
 
     //функция копирования контента коментария 
     function copyElement(item) {
@@ -89,8 +90,6 @@
 
         ListElement.innerHTML = commentHtml;
       
-      
-
       // собирать данные и отправлять в  инпут
       const commentsElement = document.querySelectorAll('.comment') 
       commentsElement.forEach((item) => {
@@ -172,7 +171,8 @@
       //блокировка кнопки 
       buttonElement.disabled = true;
       buttonElement.textContent = 'Элемент добавляеться';
-
+      buttonElement.textContent = 'Загрузка списка';
+      
       //запрос в API
       const fetchPromise = fetch( 'https://wedev-api.sky.pro/api/v1/:olga-mamontova/comments',{
             method: 'POST',
@@ -184,10 +184,11 @@
       
       APIGET();
       
+    
       //вернуть кнопку
       buttonElement.disabled = false;
       buttonElement.textContent = 'Добавить';
-        
+       
   });
 
 
