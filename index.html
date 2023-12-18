@@ -4,11 +4,10 @@
     <title>Проект "Комменты"</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
   </head>
 
   <body>
- 
-
     <div class="container" >
       <ul class="comments" id = 'comments'>
       </ul>
@@ -31,15 +30,12 @@
           </div>
         </div>
     </div>
-
- 
-  </body>
+   </body>
   
   <style> 
     .error {
       background-color: #e8b3aa;
     }
-
   </style>
 
   <script>
@@ -48,7 +44,6 @@
     const textInputElement = document.getElementById('text-input');
     const nameInputElement = document.getElementById('name-input');
     const ListElement = document.getElementById('comments');
-
 
     //функция копирования контента коментария 
     function copyElement(item) {
@@ -139,7 +134,6 @@
       fetchPromise.then((response ) => {
         const jsonPromise = response.json()
         jsonPromise.then((responseData) => {
-        
           commentList = responseData.comments.map((comment) => {
             return {
               name: comment.author.name,
@@ -153,12 +147,17 @@
           console.log(commentList);
           renderComment(commentList)
         });
-      });    
+     
+      });
+
+      fetchPromise.then((data) => {
+        buttonElement.disabled = false;
+        buttonElement.innerHTML = 'Добавить';
+      })    
     }
     APIGET();
 
-    
-  //активация кнопки //подцветка поля ввода //шаблон комента 
+    //активация кнопки //подцветка поля ввода //шаблон комента 
     buttonElement.addEventListener("click", () => {
         nameInputElement.classList.remove("error");
         textInputElement.classList.remove("error");
@@ -170,9 +169,8 @@
          
       //блокировка кнопки 
       buttonElement.disabled = true;
-      buttonElement.textContent = 'Элемент добавляеться';
-      buttonElement.textContent = 'Загрузка списка';
-      
+      buttonElement.innerHTML = 'Элемент добавляеться';
+
       //запрос в API
       const fetchPromise = fetch( 'https://wedev-api.sky.pro/api/v1/:olga-mamontova/comments',{
             method: 'POST',
@@ -181,15 +179,8 @@
               name : nameInputElement.value
             }),
       });
-      
       APIGET();
-      
-    
-      //вернуть кнопку
-      buttonElement.disabled = false;
-      buttonElement.textContent = 'Добавить';
-       
-  });
+    });
 
 
   </script>
