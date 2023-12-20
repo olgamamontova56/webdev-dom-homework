@@ -45,6 +45,8 @@
     const nameInputElement = document.getElementById('name-input');
     const ListElement = document.getElementById('comments');
 
+
+
     //функция копирования контента коментария 
     function copyElement(item) {
         const Author = item.querySelector('.comment-Author').textContent
@@ -153,7 +155,14 @@
       fetchPromise.then((data) => {
         buttonElement.disabled = false;
         buttonElement.innerHTML = 'Добавить';
-      })    
+      })   
+      
+      fetchPromise.catch((error) => {
+        buttonElement.disabled = false;
+        buttonElement.innerHTML = 'Добавить';
+        alert ('Попробуйте позже');
+        console.warn(error);
+      })
     }
     APIGET();
 
@@ -182,6 +191,6 @@
       APIGET();
     });
 
-
+    buttonElement.textContent = 'Коментарии загружаются'
   </script>
 </html>
