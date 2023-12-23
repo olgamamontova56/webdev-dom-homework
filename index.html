@@ -4,6 +4,7 @@
     <title>Проект "Комменты"</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
   </head>
 
   <body>
@@ -29,14 +30,12 @@
           </div>
         </div>
     </div>
-
-
-  </body>
+   </body>
   
   <style> 
-      .error {
+    .error {
       background-color: #e8b3aa;
-      }
+    }
   </style>
 
   <script>
@@ -45,34 +44,8 @@
     const textInputElement = document.getElementById('text-input');
     const nameInputElement = document.getElementById('name-input');
     const ListElement = document.getElementById('comments');
-   
-    //запрос в API
-    function APIGET() {
-      const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/:olga-mamontova/comments',{
-      method: 'GET',
-      });
 
-      fetchPromise.then((response ) => {
-        const jsonPromise = response.json()
-        jsonPromise.then((responseData) => {
-        
-          commentList = responseData.comments.map((comment) => {
-            return {
-              name: comment.author.name,
-              date: comment.date,
-              id: comment.id,
-              isLiked: comment.isLiked,
-              likes: comment.likes,
-              text: comment.text,
-            };
-          });
-          console.log(commentList);
-          renderComment(commentList)
-        });
-      });    
-    }
-    APIGET();
-   
+
 
     //функция копирования контента коментария 
     function copyElement(item) {
@@ -114,8 +87,6 @@
 
         ListElement.innerHTML = commentHtml;
       
-      
-
       // собирать данные и отправлять в  инпут
       const commentsElement = document.querySelectorAll('.comment') 
       commentsElement.forEach((item) => {
@@ -156,8 +127,46 @@
     }
       const dateComment = new Date();
 
+    //запрос в API
+    function APIGET() {
+      const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/:olga-mamontova/comments',{
+      method: 'GET',
+      });
 
-  //активация кнопки //подцветка поля ввода //шаблон комента 
+      fetchPromise.then((response ) => {
+        const jsonPromise = response.json()
+        jsonPromise.then((responseData) => {
+          commentList = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: comment.date,
+              id: comment.id,
+              isLiked: comment.isLiked,
+              likes: comment.likes,
+              text: comment.text,
+            };
+          });
+          console.log(commentList);
+          renderComment(commentList)
+        });
+     
+      });
+
+      fetchPromise.then((data) => {
+        buttonElement.disabled = false;
+        buttonElement.innerHTML = 'Добавить';
+      })   
+      
+      fetchPromise.catch((error) => {
+        buttonElement.disabled = false;
+        buttonElement.innerHTML = 'Добавить';
+        alert ('Попробуйте позже');
+        console.warn(error);
+      })
+    }
+    APIGET();
+
+    //активация кнопки //подцветка поля ввода //шаблон комента 
     buttonElement.addEventListener("click", () => {
         nameInputElement.classList.remove("error");
         textInputElement.classList.remove("error");
@@ -167,6 +176,10 @@
             return;
           }
          
+      //блокировка кнопки 
+      buttonElement.disabled = true;
+      buttonElement.innerHTML = 'Элемент добавляеться';
+
       //запрос в API
       const fetchPromise = fetch( 'https://wedev-api.sky.pro/api/v1/:olga-mamontova/comments',{
             method: 'POST',
@@ -175,62 +188,9 @@
               name : nameInputElement.value
             }),
       });
-      
       APIGET();
-        
-      // fetchPromise.then((response ) => {
-      //   const jsonPromise = response.json()
-      //     jsonPromise.then((responseData) => {
-      //       const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/:olga-mamontova/comments',{
-      //           method: 'GET',
-      //       });
+    });
 
-      //       fetchPromise.then((response ) => {
-      //         const jsonPromise = response.json()
-      //         jsonPromise.then((responseData) => {
-      //           commentList = responseData.comments.map((comment) => {
-      //               return {
-      //                 name: comment.author.name,
-      //                 date: comment.date,
-      //                 id: comment.id,
-      //                 isLiked: comment.isLiked,
-      //                 likes: comment.likes,
-      //                 text: comment.text,
-      //               };
-      //           });
-      //           console.log(commentList);
-      //           renderComment(commentList)
-      //         });
-      //       });    
-      //     })
-
-      // })      
-
-      // const addNewComment = () => {
-    //   comments.push({
-    //     name: nameInputElement.value
-    //     .replaceAll('&', '&amp;')
-    //     .replaceAll('<', '&it;')
-    //     .replaceAll('>', '&gt;')
-    //     .replaceAll('"', '&quot;'),
-    //     date: '12.02.22 12:18',     
-    //     text: textInputElement.value
-    //     .replaceAll('&', '&amp;')
-    //     .replaceAll('<', '&it;')
-    //     .replaceAll('>', '&gt;')
-    //     .replaceAll('"', '&quot;'),
-    //     likes: 0,
-    //     isLiked: false,
-    //   })
-    
-    //       nameInputElement.value = ""; 
-    //       textInputElement.value = "";
-    //       // renderComment();
-    // } 
-      
-    // buttonElement.addEventListener('click', addNewComment);
-  });
-
-
+    buttonElement.textContent = 'Коментарии загружаются'
   </script>
 </html>
