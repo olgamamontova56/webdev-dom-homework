@@ -26,7 +26,7 @@
             id = "text-input"
           ></textarea>
           <div class="add-form-row">
-            <button class="add-form-button" id="add-button">Написать</button>
+            <button class="add-form-button" disabled id="add-button">Написать</button>
           </div>
         </div>
     </div>
@@ -156,13 +156,7 @@
         buttonElement.disabled = false;
         buttonElement.innerHTML = 'Добавить';
       })   
-      
-      fetchPromise.catch((error) => {
-        buttonElement.disabled = false;
-        buttonElement.innerHTML = 'Добавить';
-        alert ('Попробуйте позже');
-        console.warn(error);
-      })
+
     }
     APIGET();
 
@@ -181,16 +175,40 @@
       buttonElement.innerHTML = 'Элемент добавляеться';
 
       //запрос в API
-      const fetchPromise = fetch( 'https://wedev-api.sky.pro/api/v1/:olga-mamontova/comments',{
+      const fetchPromise = fetch( 'https://wedev-api.sky.pro/api/v1/:personal-key/comments',{
             method: 'POST',
             body: JSON.stringify({
               text: textInputElement.value,
-              name : nameInputElement.value
-            }),
-      });
-      APIGET();
-    });
+              name : nameInputElement.value,
+              forceError: true,
+            })
+      })
 
+        fetchPromise.then((response ) => {
+          if (response.status === 201) {
+            return response.json()
+          } else if (response.status === 400){
+            alert ('Плохой запрос');
+          } else if (response.status === 500){
+            alert ('Попробуйте позже');
+          }
+           else {
+            console.error('Сервер упал')
+          }
+        })    
+        
+        fetchPromise.catch((error) => {
+          buttonElement.disabled = false;
+          buttonElement.innerHTML = 'Добавить';
+          alert ('Отстуствует интеренет, попробуйте позже')
+
+        })      
+      });
+      
+      APIGET();
+    
+
+    buttonElement.disabled = true;
     buttonElement.textContent = 'Коментарии загружаются'
   </script>
 </html>
