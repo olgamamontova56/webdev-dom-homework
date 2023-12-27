@@ -187,21 +187,23 @@
         fetchPromise.then((response ) => {
           if (response.status === 201) {
             return response.json()
-          } else if (response.status === 400){
-            alert ('Плохой запрос');
-          } else if (response.status === 500){
-            alert ('Попробуйте позже');
+          } else if (response.status === 400 || 500){
+            throw new Error ('Плохой запрос');
+          } else {
+            throw new Error('Сервер упал')
           }
-           else {
-            console.error('Сервер упал')
-          }
-        })    
+        })
+        
+        fetchPromise.then(() => {
+          buttonElement.disabled = false;
+          buttonElement.innerHTML = 'Добавить';
+        })
         
         fetchPromise.catch((error) => {
           buttonElement.disabled = false;
           buttonElement.innerHTML = 'Добавить';
           alert ('Отстуствует интеренет, попробуйте позже')
-
+          console.warn(error)
         })      
       });
       
