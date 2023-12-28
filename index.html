@@ -184,7 +184,7 @@
             })
       })
 
-        fetchPromise.then((response ) => {
+        .then((response ) => {
           if (response.status === 201) {
             return response.json()
           } else if (response.status === 400 || 500){
@@ -194,16 +194,15 @@
           }
         })
         
-        fetchPromise.then(() => {
+        .then(() => {
           buttonElement.disabled = false;
           buttonElement.innerHTML = 'Добавить';
         })
         
-        fetchPromise.catch((error) => {
+        .catch((error) => {
           buttonElement.disabled = false;
           buttonElement.innerHTML = 'Добавить';
           alert ('Отстуствует интеренет, попробуйте позже')
-          console.warn(error)
         })      
       });
       
