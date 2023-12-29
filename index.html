@@ -202,7 +202,7 @@
         .catch((error) => {
           buttonElement.disabled = false;
           buttonElement.innerHTML = 'Добавить';
-          alert ('Отстуствует интеренет, попробуйте позже')
+          alert (error.message)
         })      
       });
       
