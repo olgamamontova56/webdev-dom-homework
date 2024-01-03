@@ -1,7 +1,10 @@
 import { getComment, postComment } from "./api.js";
 import { renderElem } from "./elem.js";
-import { buttonElement, textInputElement, nameInputElement, ListElement } from "./constants.js";
-import { actionBtn, validation } from "./otherFunctions.js";
+import { buttonElement, textInputElement, ListElement, } from "./constants.js";
+import { eventComment, actionBtn, validation } from "./otherFunctions.js";
+import { user } from "./user.js";
+
+eventComment()
 
 //функция копирования контента коментария 
 function copyElement(item) {
@@ -28,25 +31,28 @@ const renderComment = (comments) => {
   commentsElement.forEach((item) => {
     item.querySelector('.comment-text').addEventListener('click', () =>  copyElement(item))
   })
-    initLikeListeners();
+    initLikeListeners(comments);
 }
 
 //обработчик лайков 
-const initLikeListeners = () => {
+const initLikeListeners = (comments) => {
   const likeButtons = document.querySelectorAll('.like-button');
-    for (const likeButton of likeButtons) {
+    likeButtons.forEach((likeButton, index) => {
       likeButton.addEventListener('click', (event) => {
         event.stopPropagation();
         const index = likeButton.dataset.index;
         comments[index].likes += comments[index].isLiked ? -1 : +1;
         comments[index].isLiked = !comments[index].isLiked;
-      
-        // renderComment();
+        initLikes(likeButton, comments[index])
       })
-    }
+    })  
 }
 
-//запрос в API
+function initLikes (elem , obj){
+  const likesCounter = elem.previousElementSibling
+  likesCounter.textContent = obj.likes
+}
+
 function APIGET() {
     getComment()
         .then((responseData) => {
@@ -73,10 +79,8 @@ function APIGET() {
 
 function sendComment(){
     validation()
-  //блокировка кнопки 
     actionBtn(true, 'Элемент добавляеться')
-  //запрос в API
-    postComment(nameInputElement, textInputElement)
+    postComment(textInputElement, user.userName)
         .then(() => {
             APIGET()
             actionBtn(false, 'Добавить')
@@ -87,7 +91,7 @@ function sendComment(){
         })    
 }
 
-//активация кнопки //подцветка поля ввода //шаблон комента 
+
 APIGET();
 actionBtn(true, 'Коментарии загружаются')
 
