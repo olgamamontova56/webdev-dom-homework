@@ -1,8 +1,10 @@
+import { formatDateToRu } from "../lib/formatDate/formatDate.js"
+
 export const renderElem = (comment, index) => {
   return `<li class="comment">
         <div class="comment-header">
           <div class = 'comment-Author'>${comment.name}</div>
-          <div>${comment.date}</div>
+          <div>${formatDateToRu(comment.date)}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
